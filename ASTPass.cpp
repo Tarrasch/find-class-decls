@@ -121,7 +121,7 @@ public:
 
 
       int num_succs = B.succ_size();
-      cout << "Block " << B.getBlockID() << " has " << num_succs << " successor edges!" << endl;
+      /* cout << "Block " << B.getBlockID() << " has " << num_succs << " successor edges!" << endl; */
       tot_edges += num_succs;
 
       for (CFGBlock::const_succ_iterator succ_I = B.succ_begin(), succ_E = B.succ_end();
@@ -202,7 +202,7 @@ public:
 
   void rewriteAddition(BinaryOperator *bo){
     if(bo->getOpcode() == BO_Add){
-      cout << "!! BEFORE !!" << endl; bo->dumpAll();
+      cout << "!! BEFORE !!" << endl; bo->dumpAll(); cout << endl;
       VP vec = linearize(bo);
       stable_sort(all(vec));
 
@@ -219,8 +219,8 @@ public:
       }
       bo->setLHS(l);
 
-      cout << "!! AFTER !!" << endl; bo->dumpAll();
-      cout << endl << endl;
+      cout << "!! AFTER !!" << endl; bo->dumpAll(); cout << endl;
+      cout << endl;
 
       // Just to make sure we don't visit the children (for pretty printing
       // purposes) lets destroy the AST structure
@@ -243,11 +243,13 @@ class ASTPassClassConsumer : public clang::ASTConsumer {
 
     virtual void HandleTranslationUnit(clang::ASTContext &context) {
       visitor.TraverseDecl(context.getTranslationUnitDecl());
-      visitor.printStats();
       callgraph.TraverseDecl(context.getTranslationUnitDecl());
+
+      callgraph.printStats(); // For A1
+      visitor.printStats(); // For A2 .. A5
+
       /* callgraph.dump(); */
-      callgraph.printStats();
-      pr.TraverseDecl(context.getTranslationUnitDecl());
+      pr.TraverseDecl(context.getTranslationUnitDecl()); // This one answer for B as it goes
     }
   private:
     ASTPassClassVisitor visitor;
